@@ -7,8 +7,8 @@
 if ('serviceWorker' in navigator) {
  window.addEventListener('load', () => {
 console.log("eLife cargó correctamente");
-    navigator.serviceWorker.register('./service-worker.js').catch(() => {})
-  );
+    navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+ });
 }
 
 /* ── CONSTANTS ── */
