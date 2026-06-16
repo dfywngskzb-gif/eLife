@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <meta name="theme-color" content="#007AFF"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="eLife"/>
+  <meta name="description" content="Avanza 1% cada día"/>
+  <title>eLife</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="sp-icon">e</div>
+  <div class="sp-name">eLife</div>
+  <div class="sp-tag">Avanza 1% cada día</div>
+  <div class="sp-bar"><div class="sp-fill"></div></div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+
+  <!-- SIDEBAR (desktop) -->
+  <aside id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo">e</div>
+      <div><div class="sb-name">eLife</div><div class="sb-sub">Asistente personal</div></div>
+    </div>
+    <nav class="sb-nav">
+      <button class="nav-item active" data-view="home">      <span class="ni">🏠</span> Inicio       </button>
+      <button class="nav-item" data-view="calendar">         <span class="ni">📅</span> Calendario   </button>
+      <button class="nav-item" data-view="tasks">            <span class="ni">📌</span> Tareas       </button>
+      <button class="nav-item" data-view="habits">           <span class="ni">✅</span> Hábitos      </button>
+      <button class="nav-item" data-view="pomodoro">         <span class="ni">🍅</span> Pomodoro     </button>
+      <button class="nav-item" data-view="goals">            <span class="ni">🎯</span> Metas        </button>
+      <button class="nav-item" data-view="focus">            <span class="ni">🎧</span> Enfoque      </button>
+      <button class="nav-item" data-view="journal">          <span class="ni">📓</span> Diario       </button>
+      <button class="nav-item" data-view="stats">            <span class="ni">📊</span> Estadísticas </button>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-clock">
+        <div id="sb-time" class="sb-time">--:--</div>
+        <div id="sb-date" class="sb-date">---</div>
+      </div>
+      <button class="nav-item" data-view="settings"><span class="ni">⚙️</span> Ajustes</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main id="main-content">
+
+    <!-- Search overlay -->
+    <div id="search-bar" class="search-bar hidden">
+      <div class="search-inner">
+        <span>🔍</span>
+        <input id="search-input" type="text" placeholder="Buscar eventos, hábitos, metas, tareas…"/>
+        <button id="search-close">✕</button>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+
+    <!-- ===== HOME ===== -->
+    <section id="view-home" class="view active">
+      <div class="view-header">
+        <div class="hdr-date">
+          <span id="h-wday" class="h-wday"></span>
+          <span id="h-day"  class="h-day"></span>
+          <span id="h-month" class="h-month"></span>
+        </div>
+        <div class="hdr-actions">
+          <button id="btn-search" class="icon-btn">🔍</button>
+          <button id="btn-notif"  class="icon-btn">🔔</button>
+          <button class="icon-btn theme-toggle">◑</button>
+        </div>
+      </div>
+
+      <p class="greeting" id="greeting"></p>
+      <p class="quote"    id="quote"></p>
+
+      <!-- Next event -->
+      <div class="next-card" id="next-card">
+        <div class="next-left">
+          <div class="next-label">Próxima actividad</div>
+          <div class="next-name" id="next-name">Sin eventos</div>
+          <div class="next-time" id="next-time"></div>
+        </div>
+        <div class="next-cd" id="next-cd"></div>
+      </div>
+
+      <!-- Rings -->
+      <div class="rings-row">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="24" fill="none" stroke="var(--s2)" stroke-width="5"/>
+          <circle id="r-habits" cx="30" cy="30" r="24" fill="none" stroke="var(--green)" stroke-width="5" stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="150.8" transform="rotate(-90 30 30)"/></svg>
+          <div class="ring-lbl">Hábitos</div><div class="ring-val" id="rv-habits">0/0</div>
+        </div>
+        <div class="ring-wrap">
+          <svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="24" fill="none" stroke="var(--s2)" stroke-width="5"/>
+          <circle id="r-tasks" cx="30" cy="30" r="24" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="150.8" transform="rotate(-90 30 30)"/></svg>
+          <div class="ring-lbl">Tareas</div><div class="ring-val" id="rv-tasks">0/0</div>
+        </div>
+        <div class="ring-wrap">
+          <svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="24" fill="none" stroke="var(--s2)" stroke-width="5"/>
+          <circle id="r-water" cx="30" cy="30" r="24" fill="none" stroke="var(--sky)" stroke-width="5" stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="150.8" transform="rotate(-90 30 30)"/></svg>
+          <div class="ring-lbl">Agua</div><div class="ring-val" id="rv-water">0/8</div>
+        </div>
+        <div class="ring-wrap">
+          <svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="24" fill="none" stroke="var(--s2)" stroke-width="5"/>
+          <circle id="r-goals" cx="30" cy="30" r="24" fill="none" stroke="var(--purple)" stroke-width="5" stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="150.8" transform="rotate(-90 30 30)"/></svg>
+          <div class="ring-lbl">Metas</div><div class="ring-val" id="rv-goals">0%</div>
+        </div>
+      </div>
+
+      <!-- Today schedule -->
+      <div class="sec-header">
+        <h2 class="sec-title">📋 Hoy</h2>
+        <button class="btn-add" id="btn-add-ev-home">+ Añadir</button>
+      </div>
+      <div id="today-list" class="ev-list"></div>
+
+      <!-- Water -->
+      <div class="sec-header" style="margin-top:1.4rem">
+        <h2 class="sec-title">💧 Hidratación</h2>
+        <span class="chip" id="water-chip">0/8</span>
+      </div>
+      <div class="water-card">
+        <div id="water-glasses" class="water-glasses"></div>
+        <div class="water-actions">
+          <button class="btn-water" id="btn-add-water">+ Vaso</button>
+          <button class="btn-water-reset" id="btn-reset-water">↺</button>
+        </div>
+      </div>
+
+      <!-- Quick habits -->
+      <div class="sec-header" style="margin-top:1.4rem">
+        <h2 class="sec-title">⭐ Hábitos de hoy</h2>
+        <button class="link-btn" data-view="habits">Ver todos →</button>
+      </div>
+      <div id="home-habits" class="home-habits"></div>
+    </section>
+
+    <!-- ===== CALENDAR ===== -->
+    <section id="view-calendar" class="view">
+      <div class="view-header">
+        <h1 class="view-title">Calendario</h1>
+        <button class="btn-add" id="btn-add-ev-cal">+ Evento</button>
+      </div>
+      <div class="cal-tabs">
+        <button class="cal-tab active" data-cal="day">Día</button>
+        <button class="cal-tab" data-cal="week">Semana</button>
+      </div>
+      <!-- Day panel -->
+      <div id="cal-day" class="cal-panel active">
+        <div class="cal-nav">
+          <button class="cal-nb" id="prev-day">‹</button>
+          <div class="cal-nav-center">
+            <span id="cal-day-lbl" class="cal-lbl"></span>
+            <button class="cal-today-btn" id="btn-today-day">Hoy</button>
+          </div>
+          <button class="cal-nb" id="next-day">›</button>
+        </div>
+        <div id="timeline" class="timeline"></div>
+      </div>
+      <!-- Week panel -->
+      <div id="cal-week" class="cal-panel">
+        <div class="cal-nav">
+          <button class="cal-nb" id="prev-week">‹</button>
+          <div class="cal-nav-center">
+            <span id="cal-week-lbl" class="cal-lbl"></span>
+            <button class="cal-today-btn" id="btn-today-week">Esta semana</button>
+          </div>
+          <button class="cal-nb" id="next-week">›</button>
+        </div>
+        <div id="week-grid" class="week-grid"></div>
+      </div>
+    </section>
+
+    <!-- ===== TASKS ===== -->
+    <section id="view-tasks" class="view">
+      <div class="view-header">
+        <h1 class="view-title">Tareas</h1>
+        <button class="btn-add" id="btn-add-task">+ Tarea</button>
+      </div>
+      <div class="filter-bar">
+        <button class="filter-btn active" data-f="all">Todas</button>
+        <button class="filter-btn" data-f="pending">⏳ Pendiente</button>
+        <button class="filter-btn" data-f="done">✅ Hecha</button>
+        <button class="filter-btn" data-f="failed">❌ Fallida</button>
+      </div>
+      <div id="task-list" class="ev-list"></div>
+    </section>
+
+    <!-- ===== HABITS ===== -->
+    <section id="view-habits" class="view">
+      <div class="view-header">
+        <h1 class="view-title">Hábitos</h1>
+        <button class="btn-add" id="btn-add-habit">+ Hábito</button>
+      </div>
+      <div id="habit-strip" class="habit-strip"></div>
+      <div id="habit-summary" class="habit-summary"></div>
+      <div id="habit-list" class="habit-list"></div>
+      <div class="sec-header" style="margin-top:1.5rem">
+        <h2 class="sec-title">📆 Últimas 4 semanas</h2>
+      </div>
+      <div id="heatmap" class="heatmap"></div>
+    </section>
+
+    <!-- ===== POMODORO ===== -->
+    <section id="view-pomodoro" class="view">
+      <div class="view-header"><h1 class="view-title">🍅 Pomodoro</h1></div>
+      <input id="pomo-task" type="text" class="pomo-task-input" placeholder="¿En qué estás trabajando?"/>
+      <div class="pomo-center">
+        <div class="pomo-ring-wrap">
+          <svg viewBox="0 0 230 230" class="pomo-ring">
+            <circle cx="115" cy="115" r="100" fill="none" stroke="var(--s2)" stroke-width="10"/>
+            <circle id="pomo-prog" cx="115" cy="115" r="100" fill="none" stroke="var(--red)"
+              stroke-width="10" stroke-linecap="round" stroke-dasharray="628" stroke-dashoffset="0"
+              transform="rotate(-90 115 115)"/>
+          </svg>
+          <div class="pomo-info">
+            <span id="pomo-lbl" class="pomo-lbl">Trabajo</span>
+            <span id="pomo-time" class="pomo-time">25:00</span>
+            <span id="pomo-sess" class="pomo-sess">Sesión 1</span>
+          </div>
+        </div>
+        <div class="pomo-modes">
+          <button class="pomo-mode active" data-min="25" data-type="work">🍅 25 min</button>
+          <button class="pomo-mode" data-min="5"  data-type="short">☕ 5 min</button>
+          <button class="pomo-mode" data-min="15" data-type="long">🌿 15 min</button>
+        </div>
+        <div class="pomo-controls">
+          <button class="pomo-btn sec" id="pomo-reset">↺</button>
+          <button class="pomo-btn pri" id="pomo-start">▶</button>
+          <button class="pomo-btn sec" id="pomo-skip">⏭</button>
+        </div>
+        <div id="pomo-dots" class="pomo-dots"></div>
+        <div class="pomo-stats">
+          <div class="pomo-stat"><span class="ps-ico">🍅</span><span id="ps-today" class="ps-num">0</span><small>Hoy</small></div>
+          <div class="pomo-stat"><span class="ps-ico">⏱</span><span id="ps-min"   class="ps-num">0</span><small>Minutos</small></div>
+          <div class="pomo-stat"><span class="ps-ico">🔥</span><span id="ps-streak" class="ps-num">0</span><small>Racha</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== GOALS ===== -->
+    <section id="view-goals" class="view">
+      <div class="view-header">
+        <h1 class="view-title">Metas</h1>
+        <button class="btn-add" id="btn-add-goal">+ Meta</button>
+      </div>
+      <div id="goals-overview" class="goals-overview"></div>
+      <div id="goals-list" class="goals-list"></div>
+    </section>
+
+    <!-- ===== FOCUS ===== -->
+    <section id="view-focus" class="view">
+      <div class="view-header"><h1 class="view-title">🎧 Enfoque</h1></div>
+      <div id="focus-active" class="focus-active hidden">
+        <div class="fa-icon">🎯</div>
+        <div class="fa-label">Sesión activa</div>
+        <div id="fa-task" class="fa-task">—</div>
+        <div id="fa-time" class="fa-time">00:00</div>
+        <button class="btn-danger" id="focus-end-btn">Terminar sesión</button>
+      </div>
+      <div id="focus-setup">
+        <div class="focus-hero">
+          <div style="font-size:3rem">🎧</div>
+          <p class="focus-desc">Activa el modo enfoque para concentrarte sin distracciones.</p>
+        </div>
+        <label class="form-label">¿En qué te vas a enfocar?</label>
+        <input id="focus-task-inp" type="text" class="form-input" placeholder="Describe tu tarea principal…"/>
+        <label class="form-label" style="margin-top:1rem">Duración</label>
+        <div class="focus-durs" id="focus-durs">
+          <button class="focus-dur active" data-min="25">25 min</button>
+          <button class="focus-dur" data-min="45">45 min</button>
+          <button class="focus-dur" data-min="60">1 hora</button>
+          <button class="focus-dur" data-min="90">90 min</button>
+          <button class="focus-dur" data-min="120">2 horas</button>
+        </div>
+        <div class="focus-opts">
+          <div class="focus-opt-row">
+            <span>🔕 Silenciar notificaciones</span>
+            <label class="toggle"><input type="checkbox" id="focus-mute" checked/><span class="toggle-track"></span></label>
+          </div>
+        </div>
+        <button class="btn-primary focus-start" id="focus-start-btn" style="width:100%;padding:.85rem;margin-top:1rem">
+          🎯 Iniciar sesión de enfoque
+        </button>
+      </div>
+      <div style="margin-top:1.5rem">
+        <h3 class="sec-title" style="margin-bottom:.7rem">Historial reciente</h3>
+        <div id="focus-hist" class="focus-hist"></div>
+      </div>
+    </section>
+
+    <!-- ===== JOURNAL ===== -->
+    <section id="view-journal" class="view">
+      <div class="view-header"><h1 class="view-title">Mi Día</h1></div>
+      <div class="mood-bar">
+        <span class="mood-label">¿Cómo te sientes?</span>
+        <div class="mood-btns">
+          <button class="mood-btn" data-mood="5">😄</button>
+          <button class="mood-btn" data-mood="4">🙂</button>
+          <button class="mood-btn" data-mood="3">😐</button>
+          <button class="mood-btn" data-mood="2">😕</button>
+          <button class="mood-btn" data-mood="1">😞</button>
+        </div>
+      </div>
+      <div class="journal-card">
+        <div id="journal-date" class="journal-date"></div>
+        <div class="journal-field-wrap"><label class="form-label">💬 ¿Cómo estuvo mi día?</label>
+          <textarea id="jq1" class="journal-field" placeholder="Describe tu día…"></textarea></div>
+        <div class="journal-field-wrap"><label class="form-label">💡 ¿Qué aprendí hoy?</label>
+          <textarea id="jq2" class="journal-field" placeholder="Algo nuevo que descubrí…"></textarea></div>
+        <div class="journal-field-wrap"><label class="form-label">🚀 ¿Qué mejoraré mañana?</label>
+          <textarea id="jq3" class="journal-field" placeholder="Mi propósito para mañana…"></textarea></div>
+        <button class="btn-primary" id="btn-save-journal" style="width:100%">💾 Guardar entrada</button>
+      </div>
+      <div id="journal-hist" class="journal-hist"></div>
+    </section>
+
+    <!-- ===== STATS ===== -->
+    <section id="view-stats" class="view">
+      <div class="view-header">
+        <h1 class="view-title">Estadísticas</h1>
+        <span class="chip" id="stats-week-chip"></span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card blue"><div class="sc-icon">⚡</div><div class="sc-val" id="sc-prod">—</div><div class="sc-lbl">Productividad</div></div>
+        <div class="stat-card green"><div class="sc-icon">🔥</div><div class="sc-val" id="sc-hab">—</div><div class="sc-lbl">Hábitos semana</div></div>
+        <div class="stat-card sky"><div class="sc-icon">💧</div><div class="sc-val" id="sc-water">—</div><div class="sc-lbl">Agua hoy</div></div>
+        <div class="stat-card red"><div class="sc-icon">🍅</div><div class="sc-val" id="sc-pomo">—</div><div class="sc-lbl">Sesiones foco</div></div>
+      </div>
+      <div class="chart-card"><div class="chart-title">Hábitos · 7 días</div><div id="ch-habits" class="bar-chart"></div></div>
+      <div class="chart-card"><div class="chart-title">Agua · 7 días</div><div id="ch-water" class="bar-chart"></div></div>
+      <div class="chart-card"><div class="chart-title">Progreso de metas</div><div id="ch-goals" class="goals-chart"></div></div>
+      <div class="chart-card">
+        <div class="chart-title">💾 Datos</div>
+        <p style="font-size:.82rem;color:var(--t3);margin-bottom:.7rem">Exporta o importa todos tus datos sin necesidad de cuenta.</p>
+        <div class="backup-row">
+          <button class="btn-backup" id="btn-export">↓ Exportar JSON</button>
+          <label class="btn-backup import-lbl">↑ Importar JSON<input type="file" id="import-file" accept=".json" style="display:none"/></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SETTINGS ===== -->
+    <section id="view-settings" class="view">
+      <div class="view-header"><h1 class="view-title">Ajustes</h1></div>
+      <div class="settings-list">
+        <div class="settings-group">
+          <div class="sg-label">Perfil</div>
+          <div class="sg-item"><div class="sgi-info"><span class="sgi-t">Tu nombre</span></div><input type="text" id="s-name" class="s-input" placeholder="Tu nombre"/></div>
+        </div>
+        <div class="settings-group">
+          <div class="sg-label">Apariencia</div>
+          <div class="sg-item"><div class="sgi-info"><span class="sgi-t">Modo oscuro</span><span class="sgi-s">Activar manualmente</span></div><label class="toggle"><input type="checkbox" id="dark-toggle"/><span class="toggle-track"></span></label></div>
+        </div>
+        <div class="settings-group">
+          <div class="sg-label">Hidratación</div>
+          <div class="sg-item"><div class="sgi-info"><span class="sgi-t">Meta diaria de agua</span><span class="sgi-s">Vasos por día</span></div><input type="number" id="s-wgoal" class="s-input" min="1" max="20" value="8"/></div>
+          <div class="sg-item"><div class="sgi-info"><span class="sgi-t">Recordatorio de agua</span></div><select id="s-wrem" class="s-input"><option value="0">Sin recordatorio</option><option value="30">Cada 30 min</option><option value="60" selected>Cada hora</option><option value="120">Cada 2 horas</option></select></div>
+        </div>
+        <div class="settings-group">
+          <div class="sg-label">Horario base</div>
+          <div class="sg-item"><div class="sgi-info"><span class="sgi-t">Inicio trabajo</span></div><input type="time" id="s-wstart" class="s-input" value="09:00"/></div>
+          <div class="sg-item"><div class="sgi-info"><span class="sgi-t">Fin trabajo</span></div><input type="time" id="s-wend" class="s-input" value="17:00"/></div>
+          <div class="sg-item"><div class="sgi-info"><span class="sgi-t">Dormir</span></div><input type="time" id="s-sleep" class="s-input" value="23:00"/></div>
+          <div class="sg-item"><div class="sgi-info"><span class="sgi-t">Despertar</span></div><input type="time" id="s-wake" class="s-input" value="09:00"/></div>
+        </div>
+        <div class="settings-group">
+          <div class="sg-label">Pomodoro</div>
+          <div class="sg-item"><div class="sgi-info"><span class="sgi-t">Trabajo (minutos)</span></div><input type="number" id="s-pwork" class="s-input" min="1" max="90" value="25"/></div>
+          <div class="sg-item"><div class="sgi-info"><span class="sgi-t">Descanso corto</span></div><input type="number" id="s-pshort" class="s-input" min="1" max="30" value="5"/></div>
+          <div class="sg-item"><div class="sgi-info"><span class="sgi-t">Descanso largo</span></div><input type="number" id="s-plong" class="s-input" min="1" max="60" value="15"/></div>
+        </div>
+        <div class="settings-group">
+          <div class="sg-label">Notificaciones</div>
+          <div class="sg-item"><div class="sgi-info"><span class="sgi-t">Activar notificaciones</span><span class="sgi-s" id="notif-status-txt">Estado: —</span></div><button class="btn-sm-accent" id="btn-notif-perm">Activar</button></div>
+        </div>
+        <div class="settings-group">
+          <div class="sg-label">Acerca de</div>
+          <div class="sg-item"><span class="sgi-t">eLife v3.0</span><span style="font-size:.78rem;color:var(--t3)">Avanza 1% cada día</span></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAV (mobile) -->
+  <nav id="bottom-nav">
+    <button class="bn-item active" data-view="home">    <span class="bn-ico">🏠</span><span>Inicio</span>    </button>
+    <button class="bn-item" data-view="calendar">       <span class="bn-ico">📅</span><span>Calendario</span> </button>
+    <button class="bn-item" data-view="habits">         <span class="bn-ico">✅</span><span>Hábitos</span>    </button>
+    <button class="bn-item" data-view="pomodoro">       <span class="bn-ico">🍅</span><span>Foco</span>       </button>
+    <button class="bn-item" id="btn-more">              <span class="bn-ico">⋯</span><span>Más</span>         </button>
+  </nav>
+  <div id="more-menu" class="more-menu hidden">
+    <button class="more-item" data-view="tasks">   📌 Tareas       </button>
+    <button class="more-item" data-view="goals">   🎯 Metas        </button>
+    <button class="more-item" data-view="focus">   🎧 Enfoque      </button>
+    <button class="more-item" data-view="journal"> 📓 Diario       </button>
+    <button class="more-item" data-view="stats">   📊 Estadísticas </button>
+    <button class="more-item" data-view="settings">⚙️  Ajustes      </button>
+  </div>
+</div>
+
+<!-- ===== MODALS ===== -->
+
+<!-- Event modal -->
+<div id="m-event" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-hdr"><h3 id="m-event-title">Nuevo evento</h3><button class="modal-close" data-m="m-event">✕</button></div>
+    <div class="modal-body">
+      <label class="form-label">Nombre</label>
+      <input id="ev-name" type="text" class="form-input" placeholder="Nombre del evento"/>
+      <div class="form-row">
+        <div class="form-grp"><label class="form-label">Inicio</label><input id="ev-start" type="time" class="form-input"/></div>
+        <div class="form-grp"><label class="form-label">Fin</label><input id="ev-end" type="time" class="form-input"/></div>
+      </div>
+      <label class="form-label">Categoría</label>
+      <div class="cat-sel" id="ev-cat">
+        <button class="cat-btn active" data-cat="work">🟠 Trabajo</button>
+        <button class="cat-btn" data-cat="spiritual">🔵 Espiritual</button>
+        <button class="cat-btn" data-cat="health">🟢 Salud</button>
+        <button class="cat-btn" data-cat="project">🟣 Proyectos</button>
+        <button class="cat-btn" data-cat="appt">☁️ Citas</button>
+      </div>
+      <label class="form-label">Días de repetición</label>
+      <div class="day-sel" id="ev-days">
+        <button class="day-btn" data-d="0">Dom</button><button class="day-btn" data-d="1">Lun</button>
+        <button class="day-btn" data-d="2">Mar</button><button class="day-btn" data-d="3">Mié</button>
+        <button class="day-btn" data-d="4">Jue</button><button class="day-btn" data-d="5">Vie</button>
+        <button class="day-btn" data-d="6">Sáb</button>
+      </div>
+      <label class="form-label">Aviso previo</label>
+      <select id="ev-notif" class="form-input">
+        <option value="0">Sin aviso</option><option value="5">5 min antes</option>
+        <option value="10">10 min antes</option><option value="15" selected>15 min antes</option>
+        <option value="30">30 min antes</option>
+      </select>
+      <label class="form-label">Notas</label>
+      <textarea id="ev-notes" class="form-input" rows="2" placeholder="Notas adicionales…" style="resize:vertical"></textarea>
+      <label class="form-label">Estado</label>
+      <div class="status-sel" id="ev-status">
+        <button class="status-btn active" data-st="pending">⏳ Pendiente</button>
+        <button class="status-btn" data-st="done">✅ Completado</button>
+        <button class="status-btn" data-st="failed">❌ Fallido</button>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-danger hidden" id="ev-del">🗑 Eliminar</button>
+      <div style="display:flex;gap:.5rem">
+        <button class="btn-secondary hidden" id="ev-dup">Duplicar</button>
+        <button class="btn-primary" id="ev-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Task modal -->
+<div id="m-task" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-hdr"><h3 id="m-task-title">Nueva tarea</h3><button class="modal-close" data-m="m-task">✕</button></div>
+    <div class="modal-body">
+      <label class="form-label">Nombre</label>
+      <input id="task-name" type="text" class="form-input" placeholder="Nombre de la tarea"/>
+      <label class="form-label">Descripción</label>
+      <textarea id="task-desc" class="form-input" rows="2" placeholder="Detalles…" style="resize:vertical"></textarea>
+      <div class="form-row">
+        <div class="form-grp"><label class="form-label">Fecha</label><input id="task-date" type="date" class="form-input"/></div>
+        <div class="form-grp"><label class="form-label">Hora</label><input id="task-time" type="time" class="form-input"/></div>
+      </div>
+      <label class="form-label">Prioridad</label>
+      <div class="cat-sel" id="task-pri">
+        <button class="cat-btn" data-p="high">🔴 Alta</button>
+        <button class="cat-btn active" data-p="medium">🟡 Media</button>
+        <button class="cat-btn" data-p="low">🟢 Baja</button>
+      </div>
+      <label class="form-label">Categoría</label>
+      <div class="cat-sel" id="task-cat">
+        <button class="cat-btn active" data-cat="work">🟠 Trabajo</button>
+        <button class="cat-btn" data-cat="spiritual">🔵 Espiritual</button>
+        <button class="cat-btn" data-cat="health">🟢 Salud</button>
+        <button class="cat-btn" data-cat="project">🟣 Proyectos</button>
+        <button class="cat-btn" data-cat="appt">☁️ Citas</button>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-danger hidden" id="task-del">🗑 Eliminar</button>
+      <button class="btn-primary" id="task-save">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Habit modal -->
+<div id="m-habit" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-hdr"><h3>Nuevo hábito</h3><button class="modal-close" data-m="m-habit">✕</button></div>
+    <div class="modal-body">
+      <label class="form-label">Nombre</label>
+      <input id="hab-name" type="text" class="form-input" placeholder="Nombre del hábito"/>
+      <label class="form-label">Icono</label>
+      <input id="hab-icon" type="text" class="form-input" placeholder="💧" maxlength="2" style="width:70px"/>
+      <div class="emoji-row">
+        <span class="emo" data-e="💧">💧</span><span class="emo" data-e="🏃">🏃</span><span class="emo" data-e="📖">📖</span>
+        <span class="emo" data-e="🙏">🙏</span><span class="emo" data-e="🧹">🧹</span><span class="emo" data-e="🥗">🥗</span>
+        <span class="emo" data-e="😴">😴</span><span class="emo" data-e="🧘">🧘</span><span class="emo" data-e="✍️">✍️</span>
+        <span class="emo" data-e="⚽">⚽</span><span class="emo" data-e="🎸">🎸</span><span class="emo" data-e="🧠">🧠</span>
+      </div>
+      <label class="form-label">Categoría</label>
+      <div class="cat-sel" id="hab-cat">
+        <button class="cat-btn active" data-cat="health">🟢 Salud</button>
+        <button class="cat-btn" data-cat="spiritual">🔵 Espiritual</button>
+        <button class="cat-btn" data-cat="project">🟣 Proyectos</button>
+        <button class="cat-btn" data-cat="work">🟠 Trabajo</button>
+      </div>
+      <label class="form-label">Recordatorio (opcional)</label>
+      <input id="hab-rem" type="time" class="form-input"/>
+    </div>
+    <div class="modal-foot" style="justify-content:flex-end">
+      <button class="btn-primary" id="hab-save">Crear hábito</button>
+    </div>
+  </div>
+</div>
+
+<!-- Goal modal -->
+<div id="m-goal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-hdr"><h3 id="m-goal-title">Nueva meta</h3><button class="modal-close" data-m="m-goal">✕</button></div>
+    <div class="modal-body">
+      <label class="form-label">Nombre</label>
+      <input id="goal-name" type="text" class="form-input" placeholder="Nombre de la meta"/>
+      <label class="form-label">Descripción</label>
+      <textarea id="goal-desc" class="form-input" rows="2" placeholder="Describe tu meta…" style="resize:vertical"></textarea>
+      <label class="form-label">Fecha límite</label>
+      <input id="goal-dl" type="date" class="form-input"/>
+      <label class="form-label">Progreso: <span id="goal-pct-lbl" class="range-val">0%</span></label>
+      <input id="goal-pct" type="range" class="form-range" min="0" max="100" value="0"/>
+      <label class="form-label">Categoría</label>
+      <div class="cat-sel" id="goal-cat">
+        <button class="cat-btn active" data-cat="project">🟣 Proyectos</button>
+        <button class="cat-btn" data-cat="health">🟢 Salud</button>
+        <button class="cat-btn" data-cat="spiritual">🔵 Espiritual</button>
+        <button class="cat-btn" data-cat="work">🟠 Trabajo</button>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-danger hidden" id="goal-del">🗑 Eliminar</button>
+      <button class="btn-primary" id="goal-save">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Failed modal -->
+<div id="m-failed" class="modal-overlay hidden">
+  <div class="modal modal-sm">
+    <div class="modal-hdr"><h3>Actividad fallida</h3><button class="modal-close" data-m="m-failed">✕</button></div>
+    <div class="modal-body">
+      <div class="failed-chip" id="failed-name"></div>
+      <p style="font-size:.87rem;color:var(--t2);margin-top:.5rem">¿Qué deseas hacer?</p>
+    </div>
+    <div class="modal-foot modal-col">
+      <button class="btn-primary" id="fail-move">📅 Mover para después</button>
+      <button class="btn-secondary" id="fail-keep">⏳ Dejar pendiente</button>
+      <button class="btn-danger" id="fail-del">🗑 Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Onboarding modal -->
+<div id="m-onboard" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-body" style="padding:1.8rem 1.4rem">
+      <div style="text-align:center;margin-bottom:1.4rem">
+        <div style="font-size:2.8rem">👋</div>
+        <h2 style="font-size:1.35rem;font-weight:800;margin:.3rem 0">¡Bienvenido a eLife!</h2>
+        <p style="color:var(--t3);font-size:.88rem">Tu asistente personal de organización diaria</p>
+      </div>
+      <div class="ob-steps">
+        <div class="ob-step"><span class="ob-ico">📅</span><div><strong>Calendario</strong> — Organiza tu día con eventos por categoría</div></div>
+        <div class="ob-step"><span class="ob-ico">✅</span><div><strong>Hábitos</strong> — Construye rachas y mide tu consistencia</div></div>
+        <div class="ob-step"><span class="ob-ico">🍅</span><div><strong>Pomodoro</strong> — Sesiones de enfoque con descansos automáticos</div></div>
+        <div class="ob-step"><span class="ob-ico">🎯</span><div><strong>Metas</strong> — Sigue el progreso de tus objetivos</div></div>
+        <div class="ob-step"><span class="ob-ico">📓</span><div><strong>Diario</strong> — Reflexión diaria para crecer cada día</div></div>
+      </div>
+      <label class="form-label" style="margin-top:1.2rem">¿Cómo te llamas?</label>
+      <input id="ob-name" type="text" class="form-input" placeholder="Tu nombre"/>
+    </div>
+    <div class="modal-foot" style="justify-content:center;padding-bottom:1.5rem">
+      <button class="btn-primary" id="ob-done" style="width:100%;padding:.85rem;font-size:1rem">🚀 Comenzar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Notif panel -->
+<div id="notif-panel" class="notif-panel hidden">
+  <div class="np-hdr"><h3>Notificaciones</h3><button id="np-close" class="modal-close">✕</button></div>
+  <div id="np-list" class="np-list"><div class="np-empty">Sin notificaciones</div></div>
+  <div class="np-foot"><button class="btn-secondary" id="np-clear" style="width:100%">Limpiar todo</button></div>
+</div>
+<div id="np-overlay" class="np-overlay hidden"></div>
+
+<!-- Toast -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
