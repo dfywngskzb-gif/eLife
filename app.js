@@ -83,7 +83,7 @@ const mk   = (tag, cls, html) => {
   return e;
 };
 
-function todayKey() {
+function TodayKey() {
   const d = new Date();
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 }
