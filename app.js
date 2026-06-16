@@ -5,7 +5,8 @@
 
 /* ── PWA ── */
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () =>
+ window.addEventListener('load', () => {
+console.log("eLife cargó correctamente");
     navigator.serviceWorker.register('./service-worker.js').catch(() => {})
   );
 }
